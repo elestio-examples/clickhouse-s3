@@ -52,7 +52,6 @@ services:
       - ./s3_data:/data
   createbuckets:
     image: minio/mc
-    restart: always
     depends_on:
       - minio
     entrypoint: >
