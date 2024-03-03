@@ -58,7 +58,7 @@ This guide outlines how to use Minio S3 storage with your project.
 ## Configuration
 
 In your project, you'll need to specify the Minio S3 instance as the disk storage.
-For this current project, the name is `s3_main`
+For this current project, the name is `s3`
 
 ## Creating a Table
 
@@ -71,7 +71,7 @@ To create a table in your project that utilizes the Minio S3 storage, follow thi
     )
     ENGINE = MergeTree
     ORDER BY tuple()
-    SETTINGS storage_policy = 's3_main'
+    SETTINGS storage_policy = 's3'
 
 ## Inserting Data
 
