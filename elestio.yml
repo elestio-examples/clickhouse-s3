@@ -44,8 +44,8 @@ ports:
     targetIP: "172.17.0.1"
     targetPort: "5432"
     public: true
-  - protocol: "TCP"
-    targetProtocol: "TCP"
+  - protocol: "HTTPS"
+    targetProtocol: "HTTP"
     listeningPort: "20001"
     targetIP: "172.17.0.1"
     targetPort: "10001"

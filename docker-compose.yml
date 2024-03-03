@@ -9,7 +9,7 @@ services:
       - ./config/clickhouse-options.xml:/etc/clickhouse-server/config.d/options.xml:ro
       - ./config/clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
       - ./config/clickhouse-users.xml:/etc/clickhouse-server/users.d/users.xml
-      - ./config/clickhouse-users.xml:/docker-entrypoint-initdb.d
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 172.17.0.1:28123:8123
       - 172.17.0.1:9000:9000
