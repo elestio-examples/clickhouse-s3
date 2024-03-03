@@ -4,7 +4,6 @@
 
 Example application and CI/CD pipeline showing how to deploy a clickhouse + tabix docker-compose to elestio.
 
-
 ## CI/CD on Elestio
 
 Fork this repository to create your own copy that you can modify and use in a CI/CD pipeline
@@ -15,7 +14,13 @@ When configuring your pipeline, pay attention to ports and reverse proxy. If you
 
 You can connect to your instance with the Web UI:
 
-    Host: https://[CI_CD_DOMAIN]:28125/
+    Host: https://[CI_CD_DOMAIN]/
+    Login: root
+    Password: [SOFTWARE_PASSWORD]
+
+You can connect to your Minio Web UI:
+
+    Host: https://[CI_CD_DOMAIN]:20001/
     Login: root
     Password: [SOFTWARE_PASSWORD]
 
@@ -29,7 +34,6 @@ Native clickhouse protocol is available on port: 29000 with same credentials
     CH Native host: [CI_CD_DOMAIN]
     CH Native port: 29000
     Native URI: clickhouse://root:[SOFTWARE_PASSWORD]@[CI_CD_DOMAIN]:29000/default?protocol=native
-
 
 Your ClickHouse instance can also be used with MySQL & Postgres protocol:
 
@@ -47,15 +51,44 @@ Your ClickHouse instance can also be used with MySQL & Postgres protocol:
     Password: [SOFTWARE_PASSWORD]
     URI: postgres://root:[SOFTWARE_PASSWORD]@[CI_CD_DOMAIN]:25432/default
 
+# Minio S3 Integration
+
+This guide outlines how to use Minio S3 storage with your project.
+
+## Configuration
+
+In your project, you'll need to specify the Minio S3 instance as the disk storage.
+For this current project, the name is `s3_main`
+
+## Creating a Table
+
+To create a table in your project that utilizes the Minio S3 storage, follow this example:
+
+    CREATE TABLE myS3Table
+    (
+        `id` UInt64,
+        `name` String
+    )
+    ENGINE = MergeTree
+    ORDER BY tuple()
+    SETTINGS storage_policy = 's3_main'
+
+## Inserting Data
+
+    insert into myS3Table values(1,'John');
+
+# Querying Data
+
+    SELECT *
+    FROM myS3Table
+
+This will retrieve all rows from the `myS3Table` table.
 
 ClickHouse documentation: https://clickhouse.tech/docs/en/
 
 Tabix Documentation: https://tabix.io/doc/
 
 Tabix Tips: https://tabix.io/doc/Tips/
-
-
-
 
 # Sample usage with Node.js
 
@@ -72,4 +105,3 @@ Tabix Tips: https://tabix.io/doc/Tips/
             var result = await ch.querying("SELECT 1");
             console.log(result);
     })();
-

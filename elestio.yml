@@ -20,6 +20,7 @@ ports:
     isAuth: true
     login: "root"
     password: "random_password"
+    loginTitle: "Tabix"
   - protocol: "HTTPS"
     targetProtocol: "HTTP"
     listeningPort: "18123"
@@ -68,8 +69,6 @@ environments:
   - key: "DOMAIN"
     value: "[CI_CD_DOMAIN]"
 webUI:
-  - url: "https://[CI_CD_DOMAIN]"
-    label: "Tabix Webclient"
   - url: "https://[CI_CD_DOMAIN]:20001"
     label: "Minio Webclient"
     login: "root"

@@ -5,10 +5,7 @@ services:
     restart: always
     volumes:
       - ./data:/var/lib/clickhouse
-      # - ./config/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
-      # - ./config/clickhouse-options.xml:/etc/clickhouse-server/config.d/options.xml:ro
       - ./config/clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
-      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 172.17.0.1:28123:8123
@@ -26,12 +23,12 @@ services:
         hard: 262144
 
   tabix:
-    image: spoonest/clickhouse-tabix-web-client
+    image: spoonest/clickhouse-tabix-web-client:latest
+    restart: always
     ports:
       - 172.17.0.1:28124:80
     depends_on:
       - clickhouse
-    restart: unless-stopped
     environment:
       - CH_NAME=clickhouse
       - CH_HOST=https://${DOMAIN}:18123
@@ -39,13 +36,13 @@ services:
       - CH_PASSWORD=${SOFTWARE_PASSWORD}
 
   minio:
-    image: quay.io/minio/minio
-    container_name: minio
+    image: elestio/minio:latest
+    restart: always
     hostname: minio
     command: server --address 0.0.0.0:10000 --console-address 0.0.0.0:10001 /data
     ports:
-      - "127.0.0.1:10000:10000"
-      - "127.0.0.1:10001:10001"
+      - "172.17.0.1:10000:10000"
+      - "172.17.0.1:10001:10001"
     environment:
       - MINIO_ROOT_USER=root
       - MINIO_ROOT_PASSWORD=${SOFTWARE_PASSWORD}
@@ -55,6 +52,7 @@ services:
       - ./s3_data:/data
   createbuckets:
     image: minio/mc
+    restart: always
     depends_on:
       - minio
     entrypoint: >
