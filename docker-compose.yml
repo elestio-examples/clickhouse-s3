@@ -5,10 +5,10 @@ services:
     restart: always
     volumes:
       - ./data:/var/lib/clickhouse
-      - ./config/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
-      - ./config/clickhouse-options.xml:/etc/clickhouse-server/config.d/options.xml:ro
+      # - ./config/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+      # - ./config/clickhouse-options.xml:/etc/clickhouse-server/config.d/options.xml:ro
       - ./config/clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
-      - ./config/clickhouse-users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./config/users.xml:/etc/clickhouse-server/users.d/users.xml
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 172.17.0.1:28123:8123
@@ -49,6 +49,10 @@ services:
     environment:
       - MINIO_ROOT_USER=root
       - MINIO_ROOT_PASSWORD=${SOFTWARE_PASSWORD}
+      - MINIO_BROWSER_REDIRECT_URL=https://${DOMAIN}:20001
+      - MINIO_SERVER_URL=https://${DOMAIN}:34256
+    volumes:
+      - ./s3_data:/data
   createbuckets:
     image: minio/mc
     depends_on:
