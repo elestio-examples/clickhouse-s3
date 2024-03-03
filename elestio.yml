@@ -1,0 +1,66 @@
+config:
+  runTime: "dockerCompose"
+  version: ""
+  framework: ""
+  buildCommand: "docker-compose build"
+  buildDir: "/"
+  runCommand: "docker-compose up -d"
+  icon: "icon.svg"
+  screenshot: "screenshot.png"
+ports:
+  - protocol: "HTTPS"
+    targetProtocol: "HTTP"
+    listeningPort: "443"
+    targetPort: "28124"
+    targetIP: "172.17.0.1"
+    public: true
+    path: "/"
+    isAuth: true
+    login: "root"
+    password: "random_password"
+  - protocol: "HTTPS"
+    targetProtocol: "HTTP"
+    listeningPort: "18123"
+    targetPort: "28123"
+    targetIP: "172.17.0.1"
+    public: true
+    path: "/"
+    isAuth: false
+  - protocol: "TCP"
+    targetProtocol: "TCP"
+    listeningPort: "29000"
+    targetIP: "172.17.0.1"
+    targetPort: "9000"
+    public: true
+  - protocol: "TCP"
+    targetProtocol: "TCP"
+    listeningPort: "24306"
+    targetIP: "172.17.0.1"
+    targetPort: "3306"
+    public: true
+  - protocol: "TCP"
+    targetProtocol: "TCP"
+    listeningPort: "25432"
+    targetIP: "172.17.0.1"
+    targetPort: "5432"
+    public: true
+  - protocol: "TCP"
+    targetProtocol: "TCP"
+    listeningPort: "20001"
+    targetIP: "172.17.0.1"
+    targetPort: "10001"
+    public: true
+environments:
+  - key: "SOFTWARE_VERSION_TAG"
+    value: "latest"
+  - key: "SOFTWARE_PASSWORD"
+    value: "random_password"
+  - key: "DOMAIN"
+    value: "[CI_CD_DOMAIN]"
+webUI:
+  - url: "https://[CI_CD_DOMAIN]"
+    label: "Tabix Webclient"
+  - url: "https://[CI_CD_DOMAIN]:20001"
+    label: "Minio Webclient"
+    login: "root"
+    password: "[SOFTWARE_PASSWORD]"

@@ -1,0 +1,63 @@
+version: "3.3"
+services:
+  clickhouse:
+    image: clickhouse/clickhouse-server:${SOFTWARE_VERSION_TAG}
+    restart: always
+    volumes:
+      - ./data:/var/lib/clickhouse
+      - ./config/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+      - ./config/clickhouse-options.xml:/etc/clickhouse-server/config.d/options.xml:ro
+      - ./config/clickhouse-config.xml:/etc/clickhouse-server/config.d/config.xml
+      - ./config/clickhouse-users.xml:/etc/clickhouse-server/users.d/users.xml
+      - ./config/clickhouse-users.xml:/docker-entrypoint-initdb.d
+    ports:
+      - 172.17.0.1:28123:8123
+      - 172.17.0.1:9000:9000
+      - 172.17.0.1:3306:3306
+      - 172.17.0.1:5432:5432
+    environment:
+      - CLICKHOUSE_USER=root
+      - CLICKHOUSE_PASSWORD=${SOFTWARE_PASSWORD}
+      - CLICKHOUSE_DB=default
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+
+  tabix:
+    image: spoonest/clickhouse-tabix-web-client
+    ports:
+      - 172.17.0.1:28124:80
+    depends_on:
+      - clickhouse
+    restart: unless-stopped
+    environment:
+      - CH_NAME=clickhouse
+      - CH_HOST=https://${DOMAIN}:18123
+      - CH_LOGIN=root
+      - CH_PASSWORD=${SOFTWARE_PASSWORD}
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    hostname: minio
+    command: server --address 0.0.0.0:10000 --console-address 0.0.0.0:10001 /data
+    ports:
+      - "127.0.0.1:10000:10000"
+      - "127.0.0.1:10001:10001"
+    environment:
+      - MINIO_ROOT_USER=root
+      - MINIO_ROOT_PASSWORD=${SOFTWARE_PASSWORD}
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:10000 root ${SOFTWARE_PASSWORD};
+      /usr/bin/mc admin info myminio;
+      /usr/bin/mc mb myminio/clickhouse;
+      /usr/bin/mc policy set public myminio/clickhouse;
+      exit 0;
+      "
