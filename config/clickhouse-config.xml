@@ -22,7 +22,7 @@
         <disks>
             <s3>
                 <type>s3</type>
-                <endpoint>http://minio:10000/clickhouse//</endpoint>
+                <endpoint>http://minio:10000/clickhouse/data/</endpoint>
                 <access_key_id>root</access_key_id>
                 <secret_access_key>PASSWORD_TO_CHANGE</secret_access_key>
                 <region></region>
